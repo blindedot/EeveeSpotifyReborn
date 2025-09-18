@@ -2,24 +2,24 @@ import SwiftUI
 
 struct EeveeLyricsSettingsView: View {
     @StateObject var viewModel = EeveeLyricsSettingsViewModel()
-    
+
     var body: some View {
         List {
             lyricsSourceSection()
-            
+
             if viewModel.lyricsSource != .notReplaced {
                 if viewModel.lyricsSource != .genius {
                     geniusFallbackSection()
                 }
-                
+
                 hideOnErrorSection()
-                romanizedLyricsSection()
-                
+                languageSettingsSection()
+
                 if viewModel.lyricsSource == .musixmatch {
                     musixmatchLanguageSection()
                 }
             }
-            
+
             NonIPadSpacerView()
         }
         .onReceive(viewModel.musixmatchTokenInputAlertPublisher) { showAnonymousTokenOption in
@@ -29,14 +29,14 @@ struct EeveeLyricsSettingsView: View {
         .disabled(viewModel.isRequestingMusixmatchToken)
         .animation(.default, value: viewModel.animationValues)
     }
-    
+
     @ViewBuilder private func geniusFallbackSection() -> some View {
         Section {
             Toggle(
                 "genius_fallback".localized,
                 isOn: $viewModel.lyricsOptions.geniusFallback
             )
-            
+
             if viewModel.lyricsOptions.geniusFallback {
                 Toggle(
                     "show_fallback_reasons".localized,
@@ -48,18 +48,22 @@ struct EeveeLyricsSettingsView: View {
                 .localizeWithFormat(viewModel.lyricsSource.description))
         }
     }
-    
-    @ViewBuilder private func romanizedLyricsSection() -> some View {
+
+    @ViewBuilder private func langaugeSettingsSession() -> some View {
         Section {
             Toggle(
                 "romanized_lyrics".localized,
                 isOn: $viewModel.lyricsOptions.romanization
             )
+            Toggle(
+                "simplified_chinese".localized,
+                isOn: $viewModel.lyricsOptions.simplifiedChinese
+            )
         } footer: {
             Text("romanized_lyrics_description".localized)
         }
     }
-    
+
     @ViewBuilder private func hideOnErrorSection() -> some View {
         Section {
             Toggle(
@@ -70,14 +74,14 @@ struct EeveeLyricsSettingsView: View {
             Text("hide_lyrics_on_error_description".localized)
         }
     }
-    
+
     @ViewBuilder private func musixmatchLanguageSection() -> some View {
         Section {
             HStack {
                 Text("musixmatch_language".localized)
-                
+
                 Spacer()
-                
+
                 TextField("en", text: $viewModel.lyricsOptions.musixmatchLanguage)
                     .frame(maxWidth: 20)
                     .foregroundColor(.gray)
