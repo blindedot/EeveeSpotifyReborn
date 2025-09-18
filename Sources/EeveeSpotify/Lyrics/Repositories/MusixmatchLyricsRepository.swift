@@ -87,6 +87,13 @@ class MusixmatchLyricsRepository: LyricsRepository {
         return subtitle
     }
 
+    func removeBracketedText(_ text: String) -> String {
+        let pattern = "【.*?】"
+        return text.replacingOccurrences(of: pattern,
+                                        with: "",
+                                        options: .regularExpression)
+    }
+
     //
 
     private func getTranslations(_ spotifyTrackId: String, selectedLanguage: String) throws -> [String: String] {
@@ -239,7 +246,8 @@ class MusixmatchLyricsRepository: LyricsRepository {
                 if var t = translation {
                     for i in 0..<lyricsLines.count {
                         let romanizedLine = lyricsLines[i].content.romanize()
-                        t.lines[i] = "[\(romanizedLine)]\n\(t.lines[i])"
+                        let meaningLine = removeBracketedText(t.lines[i])
+                        t.lines[i] = "[\(romanizedLine)]\n\(meaningLine)"
                     }
                     translation = t
                 } else {
