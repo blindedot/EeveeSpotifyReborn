@@ -30,6 +30,18 @@ struct EeveeLyricsSettingsView: View {
         .animation(.default, value: viewModel.animationValues)
     }
 
+    private func languageSettingsFooter() -> some View {
+        var text = "romanized_lyrics_description".localized
+
+        text.append("\n\n")
+        text.append("simplified_chinese_description".localized)
+
+        text.append("\n\n")
+        text.append("include_romanization_with_meaning_description".localized)
+
+        return Text(text)
+    }
+
     @ViewBuilder private func geniusFallbackSection() -> some View {
         Section {
             Toggle(
@@ -59,8 +71,12 @@ struct EeveeLyricsSettingsView: View {
                 "simplified_chinese".localized,
                 isOn: $viewModel.lyricsOptions.simplifiedChinese
             )
+            Toggle(
+                "include_romanization_with_meaning".localized,
+                isOn: $viewModel.lyricsOptions.includeRomanizationWithMeaning
+            )
         } footer: {
-            Text("romanized_lyrics_description".localized)
+            languageSettingsFooter()
         }
     }
 

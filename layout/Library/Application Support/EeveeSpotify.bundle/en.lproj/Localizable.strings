@@ -59,9 +59,13 @@ hide_lyrics_on_error = "Hide on Error";
 hide_lyrics_on_error_description = "Remove the lyrics component if lyrics fail to load.";
 
 romanized_lyrics = "Romanized Lyrics";
-romanized_lyrics_description = "Display romanized lyrics for Japanese, Korean, and Chinese.";
+romanized_lyrics_description = "Romanized Lyrics: Display romanized lyrics for Japanese, Korean, and Chinese.";
 
-simplified_chinese = "Display Simplified Chinese instead of Traditional Chinese";
+simplified_chinese = "Simplified Chinese";
+simplified_chinese_description = "Simplified Chinese: Overwrite Traditional Chinese to show Simplified Chinese.";
+
+include_romanization_with_meaning = "Show romanization and meaning";
+include_romanization_with_meaning_description = "Show romanization and meaning: Display romanized lyrics along with selected language for translation.";
 
 musixmatch_language = "Musixmatch Lyrics Language";
 musixmatch_language_description = "You can enter a 2-letter Musixmatch language code and see translated lyrics on Musixmatch if they are available.";

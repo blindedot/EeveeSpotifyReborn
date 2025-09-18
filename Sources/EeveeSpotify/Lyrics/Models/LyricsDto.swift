@@ -62,7 +62,7 @@ struct LyricsDto {
             _ = CFStringTransform(mutable, nil, "Hant-Hans" as CFString, false)
             return mutable as String
         } else if shouldRomanize && romanization == .canBeRomanized {
-            return content.applyingTransform(.toLatin, reverse: false)!
+            return content.romanize()
         }
 
         return content

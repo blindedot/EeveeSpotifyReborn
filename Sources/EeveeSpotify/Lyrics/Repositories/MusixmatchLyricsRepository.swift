@@ -212,6 +212,8 @@ class MusixmatchLyricsRepository: LyricsRepository {
 
             // if the user wants simplified regardless of the selected language
             if options.simplifiedChinese && selectedLanguage != simplifiedLanguage {
+                // Musixmatch tags the language incorrectly. Just don't bother getting their translation.
+                /*
                 if let translations = try? getTranslations(
                     query.spotifyTrackId,
                     selectedLanguage: simplifiedLanguage
@@ -228,6 +230,29 @@ class MusixmatchLyricsRepository: LyricsRepository {
                         }
                     }
                 }
+                */
+            }
+
+            if options.includeRomanizationWithMeaning && subtitleLanguage.isCanBeRomanizedLanguage
+                && selectedLanguage != romanizationLanguage
+            {
+                if var t = translation {
+                    for i in 0..<lyricsLines.count {
+                        let romanizedLine = lyricsLines[i].content.romanize()
+                        t.lines[i] = "[\(romanizedLine)]\n\(t.lines[i])"
+                    }
+                    translation = t
+                } else {
+                    translation = LyricsTranslationDto(
+                        languageCode: romanizationLanguage,
+                        lines: lyricsLines.map { $0.content.romanize() }
+                    )
+                }
+                if let translations = try? getTranslations(
+                    query.spotifyTrackId,
+                    selectedLanguage: romanizationLanguage
+                ) {
+                }
             }
 
             // if the user wants romanization to replace original lyrics
@@ -236,7 +261,9 @@ class MusixmatchLyricsRepository: LyricsRepository {
                     query.spotifyTrackId,
                     selectedLanguage: romanizationLanguage
                 ) {
-                    if options.simplifiedChinese && selectedLanguage != simplifiedLanguage {
+                    if !options.includeRomanizationWithMeaning && options.simplifiedChinese
+                        && selectedLanguage != simplifiedLanguage
+                    {
                         let romanizedLines = lyricsLines.map { line in
                             translations[line.content] ?? line.content
                         }

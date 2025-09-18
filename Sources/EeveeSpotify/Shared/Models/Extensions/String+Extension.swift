@@ -59,12 +59,16 @@ extension String {
             )
     }
 
+    func romanize() -> String {
+        self.applyingTransform(.toLatin, reverse: false)!
+    }
+
     var isCanBeRomanizedLanguage: Bool {
         ["ja", "ko", "z1"].contains(self) || self.contains("zh")
     }
 
     var isCanBeSimplifiedLanguage: Bool {
-        ["z1"].contains(self)
+        ["z1", "zh"].contains(self)
     }
 
     var hexadecimal: Data? {
