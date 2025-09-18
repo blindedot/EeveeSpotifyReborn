@@ -8,6 +8,11 @@ on:
         required: true
         default: false
         type: boolean
+      release:
+        description: 'Release to Github'
+        required: true
+        default: true
+        type: boolean
       upload_to_telegram:
         description: 'Upload the release to Telegram'
         required: true
@@ -206,7 +211,7 @@ jobs:
         echo "EOF" >> $GITHUB_ENV
 
     - name: Create Release
-      if: env.LATEST_EEVEESPOTIFY_VERSION != env.EEVEESPOTIFY_VERSION
+      if: ${{ github.event.inputs.release == 'true' && env.LATEST_EEVEESPOTIFY_VERSION != env.EEVEESPOTIFY_VERSION }}
       uses: actions/create-release@v1
       env:
         GITHUB_TOKEN: ${{ github.token }}
@@ -218,6 +223,7 @@ jobs:
         prerelease: false
 
     - name: Upload Packages
+      if: ${{ github.event.inputs.release == 'true' }}
       env:
         GH_TOKEN: ${{ github.token }}
       run: |

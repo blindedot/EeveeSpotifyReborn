@@ -216,12 +216,14 @@ class MusixmatchLyricsRepository: LyricsRepository {
                     query.spotifyTrackId,
                     selectedLanguage: simplifiedLanguage
                 ) {
-                    simplified = true
+                    if (translations.count > 0) {
+                        simplified = true
 
-                    for (original, translation) in translations {
-                        for i in 0..<lyricsLines.count {
-                            if lyricsLines[i].content == original {
-                                lyricsLines[i].content = translation
+                        for (original, translation) in translations {
+                            for i in 0..<lyricsLines.count {
+                                if lyricsLines[i].content == original {
+                                    lyricsLines[i].content = translation
+                                }
                             }
                         }
                     }
@@ -234,12 +236,23 @@ class MusixmatchLyricsRepository: LyricsRepository {
                     query.spotifyTrackId,
                     selectedLanguage: romanizationLanguage
                 ) {
-                    romanized = true
+                    if options.simplifiedChinese && selectedLanguage != simplifiedLanguage {
+                        let romanizedLines = lyricsLines.map { line in
+                            translations[line.content] ?? line.content
+                        }
 
-                    for (original, translation) in translations {
-                        for i in 0..<lyricsLines.count {
-                            if lyricsLines[i].content == original {
-                                lyricsLines[i].content = translation
+                        translation = LyricsTranslationDto(
+                            languageCode: romanizationLanguage,
+                            lines: romanizedLines
+                        )
+                    } else {
+                        romanized = true
+
+                        for (original, translation) in translations {
+                            for i in 0..<lyricsLines.count {
+                                if lyricsLines[i].content == original {
+                                    lyricsLines[i].content = translation
+                                }
                             }
                         }
                     }
