@@ -105,7 +105,7 @@ private func loadCustomLyricsForCurrentTrack() throws -> Lyrics {
     lyricsState.wasRomanized = lyricsDto.romanization == .romanized
         || (lyricsDto.romanization == .canBeRomanized && UserDefaults.lyricsOptions.romanization)
 
-    lyricsState.wasChineseSimplified = lyricsDto.chineseSimplified = .chineseSimplified
+    lyricsState.wasChineseSimplified = lyricsDto.chineseSimplified == .chineseSimplified
         || (lyricsDto.chineseSimplified == .canBeChineseSimplified && UserDefaults.lyricsOptions.simplifiedChinese)
 
     lyricsState.loadedSuccessfully = true

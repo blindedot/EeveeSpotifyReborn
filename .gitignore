@@ -12,3 +12,5 @@ xcuserdata/
 packages/
 .DS_Store
 .vscode/
+
+build

@@ -49,7 +49,7 @@ struct EeveeLyricsSettingsView: View {
         }
     }
 
-    @ViewBuilder private func langaugeSettingsSession() -> some View {
+    @ViewBuilder private func languageSettingsSection() -> some View {
         Section {
             Toggle(
                 "romanized_lyrics".localized,
