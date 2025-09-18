@@ -11,6 +11,7 @@ class MusixmatchLyricsRepository: LyricsRepository {
     )
 
     private init(language: String) {
+        // acts as the translation language; lyrics still show the original language
         selectedLanguage = language
     }
 
@@ -138,6 +139,7 @@ class MusixmatchLyricsRepository: LyricsRepository {
         // 😭😭😭
 
         var romanized = false
+        var simplified = false
         var translation: LyricsTranslationDto? = nil
 
         let macroCalls = try getMacroCalls(data)
@@ -152,6 +154,7 @@ class MusixmatchLyricsRepository: LyricsRepository {
             ) {
 
             let romanizationLanguage = "r\(subtitleLanguage.prefix(1))"
+            let simplifiedLanguage = "zh"
 
             var lyricsLines = subtitles.dropLast().map { subtitle in
                 LyricsLineDto(
@@ -167,6 +170,7 @@ class MusixmatchLyricsRepository: LyricsRepository {
                 )
             )
 
+            // if selected language doesn't match song source, try to get translations
             if selectedLanguage != subtitleLanguage,
                let subtitleTranslated = subtitle["subtitle_translated"] as? [String: Any],
                let subtitleTranslatedBody = subtitleTranslated["subtitle_body"] as? String,
@@ -174,6 +178,8 @@ class MusixmatchLyricsRepository: LyricsRepository {
                     [MusixmatchSubtitle].self, from: subtitleTranslatedBody.data(using: .utf8)!
                )
             {
+                // if selected language is romanization language, replace source
+                // assumes subtitleLanguage can be romanized (isCanBeRomanizedLanguage)
                 if selectedLanguage == romanizationLanguage {
                     romanized = true
 
@@ -183,6 +189,19 @@ class MusixmatchLyricsRepository: LyricsRepository {
                         }
                     }
                 }
+                // if selected language is simplified chinese, replace source
+                else if subtitleLanguage.isCanBeRomanizedLanguage
+                    && selectedLanguage == simplifiedLanguage
+                {
+                    simplified = true
+
+                    for (index, subtitleTranslated) in subtitlesTranslated.enumerated() {
+                        if !subtitleTranslated.text.isEmpty {
+                            lyricsLines[index].content = subtitleTranslated.text
+                        }
+                    }
+                }
+                // otherwise add as translation
                 else {
                     translation = LyricsTranslationDto(
                         languageCode: selectedLanguage,
@@ -191,6 +210,25 @@ class MusixmatchLyricsRepository: LyricsRepository {
                 }
             }
 
+            // if the user wants simplified regardless of the selected language
+            if options.simplifiedChinese && selectedLanguage != simplifiedLanguage {
+                if let translations = try? getTranslations(
+                    query.spotifyTrackId,
+                    selectedLanguage: simplifiedLanguage
+                ) {
+                    simplified = true
+
+                    for (original, translation) in translations {
+                        for i in 0..<lyricsLines.count {
+                            if lyricsLines[i].content == original {
+                                lyricsLines[i].content = translation
+                            }
+                        }
+                    }
+                }
+            }
+
+            // if the user wants romanization to replace original lyrics
             if options.romanization && selectedLanguage != romanizationLanguage {
                 if let translations = try? getTranslations(
                     query.spotifyTrackId,
@@ -217,15 +255,25 @@ class MusixmatchLyricsRepository: LyricsRepository {
                 romanization = .canBeRomanized
             }
 
+            var chineseSimplified = LyricsChineseSimplificationStatus.original
+
+            if simplified {
+                chineseSimplified = .chineseSimplified
+            }
+            else if subtitleLanguage.isCanBeSimplifiedLanguage {
+                chineseSimplified = .canBeChineseSimplified
+            }
+
             return LyricsDto(
                 lines: lyricsLines,
                 timeSynced: true,
                 romanization: romanization,
-                chineseSimplified: .original,
+                chineseSimplified: chineseSimplified,
                 translation: translation
             )
         }
 
+        // does not bother directly substituting romanized, simplified chinese, or with translations
         if let trackLyricsGet = macroCalls["track.lyrics.get"] as? [String: Any],
            let lyricsMessage = trackLyricsGet["message"] as? [String: Any],
            let lyricsHeader = lyricsMessage["header"] as? [String: Any],
@@ -251,7 +299,7 @@ class MusixmatchLyricsRepository: LyricsRepository {
                         .map { LyricsLineDto(content: $0.lyricsNoteIfEmpty) },
                     timeSynced: false,
                     romanization: lyricsLanguage.isCanBeRomanizedLanguage ? .canBeRomanized : .original,
-                    chineseSimplified: .original
+                    chineseSimplified: lyricsLanguage.isCanBeSimplifiedLanguage ? .canBeChineseSimplified : .original
                 )
             }
         }

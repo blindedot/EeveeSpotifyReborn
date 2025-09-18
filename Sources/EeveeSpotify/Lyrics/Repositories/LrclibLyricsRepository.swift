@@ -120,7 +120,7 @@ class LrclibLyricsRepository: LyricsRepository {
                 lines: mapSyncedLyricsLines(lines),
                 timeSynced: true,
                 romanization: lines.canBeRomanized ? .canBeRomanized : .original,
-                chineseSimplified: .original
+                chineseSimplified: lines.canBeSimplifiedLanguage ? .canBeChineseSimplified : .original
             )
         }
 
@@ -134,7 +134,7 @@ class LrclibLyricsRepository: LyricsRepository {
             lines: lines.map { content in LyricsLineDto(content: content) },
             timeSynced: false,
             romanization: lines.canBeRomanized ? .canBeRomanized : .original,
-            chineseSimplified: .original
+            chineseSimplified:  lines.canBeSimplifiedLanguage ? .canBeChineseSimplified : .original
         )
     }
 }

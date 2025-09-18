@@ -57,8 +57,10 @@ struct LyricsDto {
     private func processLineContent(
         _ content: String, shouldRomanize: Bool, shouldSimplifyChinese: Bool
     ) -> String {
-        if shouldSimplifyChinese && chineseSimplified == .chineseSimplified {
-            // return content.applyingTransform(.simplifiedToTraditional, reverse: true)!
+        if shouldSimplifyChinese && chineseSimplified == .canBeChineseSimplified {
+            let mutable = NSMutableString(string: content)
+            _ = CFStringTransform(mutable, nil, "Hant-Hans" as CFString, false)
+            return mutable as String
         } else if shouldRomanize && romanization == .canBeRomanized {
             return content.applyingTransform(.toLatin, reverse: false)!
         }

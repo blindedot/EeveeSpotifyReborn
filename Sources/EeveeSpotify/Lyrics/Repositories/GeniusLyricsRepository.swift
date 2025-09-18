@@ -144,7 +144,6 @@ class GeniusLyricsRepository: LyricsRepository {
         let plainLines = songInfo.lyrics.plain.components(separatedBy: "\n")
 
         var romanization = LyricsRomanizationStatus.original
-        var chineseSimplified = LyricsChineseSimplificationStatus.original
 
         if hasFoundRomanizedLyrics {
             romanization = .romanized
@@ -153,11 +152,13 @@ class GeniusLyricsRepository: LyricsRepository {
             romanization = .canBeRomanized
         }
 
+        let lines = mapLyricsLines(plainLines)
+
         return LyricsDto(
-            lines: mapLyricsLines(plainLines).map { line in LyricsLineDto(content: line) },
+            lines: lines.map { line in LyricsLineDto(content: line) },
             timeSynced: false,
             romanization: romanization,
-            chineseSimplified: chineseSimplified
+            chineseSimplified: lines.canBeSimplifiedLanguage ? .canBeChineseSimplified : .original
         )
     }
 }
