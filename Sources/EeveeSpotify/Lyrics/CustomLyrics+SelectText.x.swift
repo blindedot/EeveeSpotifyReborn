@@ -23,9 +23,10 @@ private func makeSelectable(_ tv: UITextView) {
 
 class SelectableUITextViewHook: ClassHook<UITextView> {
     func didMoveToWindow() {
+        // override
         orig.didMoveToWindow()
 
-        self.textColor = .green
+        target.textColor = .green
 
         if !target.isSelectable {
             makeSelectable(target)
@@ -37,6 +38,23 @@ class SelectableUITextViewHook: ClassHook<UITextView> {
 
         if !target.isSelectable {
             makeSelectable(target)
+        }
+    }
+
+    func editMenu(for textRange: UITextRange, suggestedActions: [UIMenuElement]) -> UIMenu? {
+        // override
+        let plecoAction = UIAction(title: "Pleco") { (action) in
+            self.openInPleco()
+        }
+
+        return UIMenu(children: [plecoAction])
+    }
+
+    // orion:new
+    func openInPleco() {
+        if let range = target.selectedTextRange, let selectedText = target.text(in: range) {
+            let url = URL(string: "plecoapi://x-callback-url/df?hw=\(selectedText)")
+            UIApplication.shared.open(url!)
         }
     }
 }
