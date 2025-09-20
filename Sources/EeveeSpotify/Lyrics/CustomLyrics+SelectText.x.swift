@@ -25,6 +25,8 @@ class SelectableUITextViewHook: ClassHook<UITextView> {
     func didMoveToWindow() {
         orig.didMoveToWindow()
 
+        self.textColor = .green
+
         if !target.isSelectable {
             makeSelectable(target)
         }
