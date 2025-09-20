@@ -6,23 +6,23 @@ class LrclibLyricsRepository: LyricsRepository {
 
     private init(apiUrl: String) {
         self.apiUrl = apiUrl
-        
+
         let configuration = URLSessionConfiguration.default
         configuration.httpAdditionalHeaders = [
             "User-Agent": "EeveeSpotify v\(EeveeSpotify.version) https://github.com/whoeevee/EeveeSpotify"
         ]
-        
+
         session = URLSession(configuration: configuration)
     }
-    
+
     static let originalApiUrl = "https://lrclib.net/api"
-    
+
     static let shared = LrclibLyricsRepository(
         apiUrl: UserDefaults.lyricsOptions.lrclibUrl
     )
-    
+
     private func perform(
-        _ path: String, 
+        _ path: String,
         query: [String:Any] = [:]
     ) throws -> Data {
         var stringUrl = "\(apiUrl)\(path)"
@@ -31,7 +31,7 @@ class LrclibLyricsRepository: LyricsRepository {
             let queryString = query.queryString
             stringUrl += "?\(queryString)"
         }
-        
+
         let request = URLRequest(url: URL(string: stringUrl)!)
 
         let semaphore = DispatchSemaphore(value: 0)
@@ -53,7 +53,7 @@ class LrclibLyricsRepository: LyricsRepository {
 
         return data!
     }
-    
+
     private func getSong(trackName: String, artistName: String) throws -> LrclibSong {
         let data: Data = try perform("/get", query: [
             "track_name": trackName,
@@ -61,7 +61,7 @@ class LrclibLyricsRepository: LyricsRepository {
         ])
         return try JSONDecoder().decode(LrclibSong.self, from: data)
     }
-    
+
     private func mapSyncedLyricsLines(_ lines: [String]) -> [LyricsLineDto] {
         return lines.compactMap { line in
             guard let match = line.firstMatch(
@@ -69,21 +69,21 @@ class LrclibLyricsRepository: LyricsRepository {
             ) else {
                 return nil
             }
-            
+
             var captures: [String: String] = [:]
-            
+
             for name in ["minute", "seconds", "content"] {
                 let matchRange = match.range(withName: name)
-                
+
                 if let substringRange = Range(matchRange, in: line) {
                     captures[name] = String(line[substringRange])
                 }
             }
-            
+
             let minute = Int(captures["minute"]!)!
             let seconds = Float(captures["seconds"]!)!
             let content = captures["content"]!
-            
+
             return LyricsLineDto(
                 content: content.lyricsNoteIfEmpty,
                 offsetMs: Int(minute * 60 * 1000 + Int(seconds * 1000))
@@ -109,7 +109,8 @@ class LrclibLyricsRepository: LyricsRepository {
             return LyricsDto(
                 lines: [],
                 timeSynced: false,
-                romanization: .original
+                romanization: .original,
+                chineseSimplified: .original
             )
         }
 
@@ -118,20 +119,22 @@ class LrclibLyricsRepository: LyricsRepository {
             return LyricsDto(
                 lines: mapSyncedLyricsLines(lines),
                 timeSynced: true,
-                romanization: lines.canBeRomanized ? .canBeRomanized : .original
+                romanization: lines.canBeRomanized ? .canBeRomanized : .original,
+                chineseSimplified: lines.canBeSimplifiedLanguage ? .canBeChineseSimplified : .original
             )
         }
-        
+
         guard let plainLyrics = song.plainLyrics else {
             throw LyricsError.decodingError
         }
-        
+
         let lines = Array(plainLyrics.components(separatedBy: "\n").dropLast())
-        
+
         return LyricsDto(
             lines: lines.map { content in LyricsLineDto(content: content) },
             timeSynced: false,
-            romanization: lines.canBeRomanized ? .canBeRomanized : .original
+            romanization: lines.canBeRomanized ? .canBeRomanized : .original,
+            chineseSimplified:  lines.canBeSimplifiedLanguage ? .canBeChineseSimplified : .original
         )
     }
 }

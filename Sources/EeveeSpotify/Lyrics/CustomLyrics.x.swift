@@ -19,7 +19,7 @@ private func loadCustomLyricsForCurrentTrack() throws -> Lyrics {
     guard let track = nowPlayingScrollViewController?.loadedTrack else {
         throw LyricsError.noCurrentTrack
     }
-    
+
     let searchQuery = LyricsSearchQuery(
         title: track.trackTitle(),
         primaryArtist: EeveeSpotify.hookTarget == .lastAvailableiOS14
@@ -27,10 +27,10 @@ private func loadCustomLyricsForCurrentTrack() throws -> Lyrics {
             : track.artistName(),
         spotifyTrackId: track.URI().spt_trackIdentifier()
     )
-    
+
     let options = UserDefaults.lyricsOptions
     var source = UserDefaults.lyricsSource
-    
+
     // switched to swift 5.8 syntax to compile with Theos on Linux.
     var repository: LyricsRepository
 
@@ -46,20 +46,20 @@ private func loadCustomLyricsForCurrentTrack() throws -> Lyrics {
     case .notReplaced:
         throw LyricsError.invalidSource
     }
-    
+
     let lyricsDto: LyricsDto
-    
+
     lyricsState = LyricsLoadingState()
-    
+
     do {
         lyricsDto = try repository.getLyrics(searchQuery, options: options)
     }
     catch let error {
         if let error = error as? LyricsError {
             lyricsState.fallbackError = error
-            
+
             switch error {
-                
+
             case .invalidMusixmatchToken:
                 if !hasShownUnauthorizedPopUp {
                     PopUpHelper.showPopUp(
@@ -67,10 +67,10 @@ private func loadCustomLyricsForCurrentTrack() throws -> Lyrics {
                         message: "musixmatch_unauthorized_popup".localized,
                         buttonText: "OK".uiKitLocalized
                     )
-                    
+
                     hasShownUnauthorizedPopUp.toggle()
                 }
-            
+
             case .musixmatchRestricted:
                 if !hasShownRestrictedPopUp {
                     PopUpHelper.showPopUp(
@@ -78,10 +78,10 @@ private func loadCustomLyricsForCurrentTrack() throws -> Lyrics {
                         message: "musixmatch_restricted_popup".localized,
                         buttonText: "OK".uiKitLocalized
                     )
-                    
+
                     hasShownRestrictedPopUp.toggle()
                 }
-                
+
             default:
                 break
             }
@@ -89,28 +89,31 @@ private func loadCustomLyricsForCurrentTrack() throws -> Lyrics {
         else {
             lyricsState.fallbackError = .unknownError
         }
-        
+
         if source == .genius || !UserDefaults.lyricsOptions.geniusFallback {
             throw error
         }
-        
+
         source = .genius
         repository = GeniusLyricsRepository()
-        
+
         lyricsDto = try repository.getLyrics(searchQuery, options: options)
     }
-    
+
     lyricsState.isEmpty = lyricsDto.lines.isEmpty
-    
+
     lyricsState.wasRomanized = lyricsDto.romanization == .romanized
         || (lyricsDto.romanization == .canBeRomanized && UserDefaults.lyricsOptions.romanization)
-    
+
+    lyricsState.wasChineseSimplified = lyricsDto.chineseSimplified == .chineseSimplified
+        || (lyricsDto.chineseSimplified == .canBeChineseSimplified && UserDefaults.lyricsOptions.simplifiedChinese)
+
     lyricsState.loadedSuccessfully = true
 
     let lyrics = Lyrics.with {
         $0.data = lyricsDto.toSpotifyLyricsData(source: source.description)
     }
-    
+
     return lyrics
 }
 
@@ -118,11 +121,11 @@ func getLyricsDataForCurrentTrack(originalLyrics: Lyrics? = nil) throws -> Data 
     guard let track = nowPlayingScrollViewController?.loadedTrack else {
         throw LyricsError.noCurrentTrack
     }
-    
+
     var lyrics = try loadCustomLyricsForCurrentTrack()
-    
+
     let lyricsColorsSettings = UserDefaults.lyricsColors
-    
+
     if lyricsColorsSettings.displayOriginalColors, let originalLyrics = originalLyrics {
         lyrics.colors = originalLyrics.colors
     }
@@ -133,9 +136,9 @@ func getLyricsDataForCurrentTrack(originalLyrics: Lyrics? = nil) throws -> Data 
         default:
             track.metadata()["extracted_color"]
         }
-        
+
         var color: Color
-        
+
         if lyricsColorsSettings.useStaticColor {
             color = Color(hex: lyricsColorsSettings.staticColor)
         }
@@ -150,13 +153,13 @@ func getLyricsDataForCurrentTrack(originalLyrics: Lyrics? = nil) throws -> Data 
         else {
             color = Color.gray
         }
-        
+
         lyrics.colors = LyricsColors.with {
             $0.backgroundColor = color.uInt32
             $0.lineColor = Color.black.uInt32
             $0.activeLineColor = Color.white.uInt32
         }
     }
-    
+
     return try lyrics.serializedBytes()
 }

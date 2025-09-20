@@ -4,17 +4,19 @@ struct LyricsDto {
     var lines: [LyricsLineDto]
     var timeSynced: Bool
     var romanization: LyricsRomanizationStatus
+    var chineseSimplified: LyricsChineseSimplificationStatus
     var translation: LyricsTranslationDto?
-    
+
     func toSpotifyLyricsData(source: String) -> LyricsData {
         var lyricsData = LyricsData.with {
             $0.timeSynchronized = timeSynced
             $0.restriction = .unrestricted
             $0.providedBy = "\(source) (EeveeSpotify)"
         }
-        
+
         let shouldRomanize = UserDefaults.lyricsOptions.romanization
-        
+        let shouldSimplifyChinese = UserDefaults.lyricsOptions.simplifiedChinese
+
         if lines.isEmpty {
             lyricsData.lines = [
                 LyricsLine.with {
@@ -29,26 +31,40 @@ struct LyricsDto {
             ]
         }
         else {
-            let sortedLines = lines.sorted { 
+            let sortedLines = lines.sorted {
                 ($0.offsetMs ?? 0) < ($1.offsetMs ?? 0)
             }
             lyricsData.lines = sortedLines.map { line in
                 LyricsLine.with {
-                    $0.content = (shouldRomanize && romanization == .canBeRomanized)
-                        ? line.content.applyingTransform(.toLatin, reverse: false)!
-                        : line.content
+                    $0.content = processLineContent(
+                        line.content, shouldRomanize: shouldRomanize,
+                        shouldSimplifyChinese: shouldSimplifyChinese)
                     $0.offsetMs = Int32(line.offsetMs ?? 0)
                 }
             }
         }
-        
+
         if let translation = translation {
             lyricsData.translation = LyricsTranslation.with {
                 $0.languageCode = translation.languageCode
                 $0.lines = translation.lines
             }
         }
-        
+
         return lyricsData
+    }
+
+    private func processLineContent(
+        _ content: String, shouldRomanize: Bool, shouldSimplifyChinese: Bool
+    ) -> String {
+        if shouldSimplifyChinese && chineseSimplified == .canBeChineseSimplified {
+            let mutable = NSMutableString(string: content)
+            _ = CFStringTransform(mutable, nil, "Hant-Hans" as CFString, false)
+            return mutable as String
+        } else if shouldRomanize && romanization == .canBeRomanized {
+            return content.romanize()
+        }
+
+        return content
     }
 }
