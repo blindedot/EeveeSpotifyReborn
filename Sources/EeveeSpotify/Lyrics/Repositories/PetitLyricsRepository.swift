@@ -116,9 +116,6 @@ class PetitLyricsRepository: LyricsRepository {
                 timeSynced: true,
                 romanization: lyrics.lines.map { $0.linestring }.canBeRomanized
                     ? .canBeRomanized
-                    : .original,
-                chineseSimplified: lyrics.lines.map { $0.linestring }.canBeSimplifiedLanguage
-                    ? .canBeChineseSimplified
                     : .original
             )
 
@@ -129,8 +126,7 @@ class PetitLyricsRepository: LyricsRepository {
             return LyricsDto(
                 lines: lines.map { LyricsLineDto(content: $0) },
                 timeSynced: false,
-                romanization: lines.canBeRomanized ? .canBeRomanized : .original,
-                chineseSimplified: lines.canBeSimplifiedLanguage ? .canBeChineseSimplified : .original
+                romanization: lines.canBeRomanized ? .canBeRomanized : .original
             )
 
         default:

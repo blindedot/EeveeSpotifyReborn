@@ -12,10 +12,10 @@ struct PremiumPatchingGroup: HookGroup { }
 
 struct EeveeSpotify: Tweak {
     static let version = "6.1.4"
-    
+
     static var hookTarget: VersionHookTarget {
         let version = Bundle.main.infoDictionary!["CFBundleShortVersionString"] as! String
-        
+
         switch version {
         case "9.0.48":
             return .lastAvailableiOS15
@@ -25,20 +25,24 @@ struct EeveeSpotify: Tweak {
             return .latest
         }
     }
-    
+
     init() {
         if UserDefaults.experimentsOptions.showInstagramDestination {
             InstgramDestinationGroup().activate()
         }
-        
+
+        if UserDefaults.allSimplifiedChinese {
+            AllSimplifiedChinese().activate()
+        }
+
         if UserDefaults.darkPopUps {
             DarkPopUps().activate()
         }
-        
+
         if UserDefaults.patchType.isPatching {
             PremiumPatchingGroup().activate()
         }
-        
+
         if UserDefaults.lyricsSource.isReplacingLyrics {
             LyricsGroup().activate()
         }

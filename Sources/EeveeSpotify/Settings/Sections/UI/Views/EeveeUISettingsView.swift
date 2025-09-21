@@ -15,12 +15,12 @@ struct EeveeUISettingsView: View {
                         "display_original_colors".localized,
                         isOn: $lyricsColors.displayOriginalColors
                     )
-                    
+
                     Toggle(
                         "use_static_color".localized,
                         isOn: $lyricsColors.useStaticColor
                     )
-                    
+
                     if lyricsColors.useStaticColor {
                         ColorPicker(
                             "static_color".localized,
@@ -34,7 +34,7 @@ struct EeveeUISettingsView: View {
                     else {
                         VStack(alignment: .leading, spacing: 5) {
                             Text("color_normalization_factor".localized)
-                            
+
                             Slider(
                                 value: $lyricsColors.normalizationFactor,
                                 in: 0.2...0.8,
@@ -47,7 +47,7 @@ struct EeveeUISettingsView: View {
                     UserDefaults.lyricsColors = lyricsColors
                 }
             }
-            
+
             Section {
                 Toggle(
                     "dark_popups".localized,
@@ -56,11 +56,19 @@ struct EeveeUISettingsView: View {
                         set: { UserDefaults.darkPopUps = $0 }
                     )
                 )
+
+                Toggle(
+                    "all_simplified_chinese".localized,
+                    isOn: Binding<Bool>(
+                        get: { UserDefaults.allSimplifiedChinese },
+                        set: { UserDefaults.allSimplifiedChinese = $0 }
+                    )
+                )
             }
-            
+
             NonIPadSpacerView()
         }
-        
+
         .listStyle(GroupedListStyle())
         .animation(.default, value: lyricsColors)
     }

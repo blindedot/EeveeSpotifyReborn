@@ -2,7 +2,6 @@ import Foundation
 
 struct LyricsOptions: Codable, Hashable {
     var romanization: Bool
-    var simplifiedChinese: Bool
     var includeRomanizationWithMeaning: Bool
     var musixmatchLanguage: String
     var lrclibUrl: String

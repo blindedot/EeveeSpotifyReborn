@@ -5,7 +5,6 @@ extension UserDefaults {
         key: "lyricsOptions",
         defaultValue: LyricsOptions(
             romanization: false,
-            simplifiedChinese: false,
             includeRomanizationWithMeaning: false,
             musixmatchLanguage: Locale.current.languageCode ?? "",
             lrclibUrl: LrclibLyricsRepository.originalApiUrl,

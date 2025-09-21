@@ -63,6 +63,12 @@ extension String {
         self.applyingTransform(.toLatin, reverse: false)!
     }
 
+    func simplify() -> String {
+        let mutable = NSMutableString(string: self)
+        _ = CFStringTransform(mutable, nil, "Hant-Hans" as CFString, false)
+        return mutable as String
+    }
+
     var isCanBeRomanizedLanguage: Bool {
         ["ja", "ko", "z1"].contains(self) || self.contains("zh")
     }

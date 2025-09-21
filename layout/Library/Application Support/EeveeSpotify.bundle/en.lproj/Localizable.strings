@@ -61,11 +61,8 @@ hide_lyrics_on_error_description = "Remove the lyrics component if lyrics fail t
 romanized_lyrics = "Romanized Lyrics";
 romanized_lyrics_description = "Romanized Lyrics: Display romanized lyrics for Japanese, Korean, and Chinese.";
 
-simplified_chinese = "Simplified Chinese";
-simplified_chinese_description = "Simplified Chinese: Overwrite Traditional Chinese to show Simplified Chinese.";
-
 include_romanization_with_meaning = "Show romanization and meaning";
-include_romanization_with_meaning_description = "Show romanization and meaning: Display romanized lyrics along with selected language for translation.";
+include_romanization_with_meaning_description = "Show romanization and meaning: Display romanized lyrics with translation, keeping lyric characters.";
 
 musixmatch_language = "Musixmatch Lyrics Language";
 musixmatch_language_description = "You can enter a 2-letter Musixmatch language code and see translated lyrics on Musixmatch if they are available.";
@@ -84,6 +81,7 @@ static_color = "Static Color";
 
 color_normalization_factor = "Color Normalization Factor";
 dark_popups = "Dark PopUps";
+all_simplified_chinese = "Simplified Chinese";
 
 // Experiments
 
@@ -109,7 +107,6 @@ could_not_share_popup = "Couldn’t share to the selected destination or LiveCon
 
 fallback_attribute = "Fallback";
 romanized_attribute = "Romanized";
-chinese_simplified_attribute = "Simplified Chinese";
 
 musixmatch_unauthorized_popup = "The tweak is unable to load lyrics from Musixmatch due to Unauthorized error. Please check or update your Musixmatch token. If you use an iPad, you should get the token from the Musixmatch app for iPad.";
 musixmatch_restricted_popup = "The tweak is unable to load lyrics from Musixmatch because they are restricted. It's likely a copyright issue due to the US IP address, so you should change it if you're in the US or use a VPN.";
