@@ -6,7 +6,7 @@ extension NowPlayingScrollViewController {
             Ivars<NSObject>(self).scrollViewModel
         }
     }
-    
+
     var scrollEnabled: Bool {
         get {
             Ivars<Bool>(nowPlayingScrollViewModel).scrollEnabled
@@ -15,21 +15,22 @@ extension NowPlayingScrollViewController {
             Ivars<Bool>(nowPlayingScrollViewModel).scrollEnabled = newValue
         }
     }
-    
+
     var loadedTrack: SPTPlayerTrack {
         get {
             Ivars<SPTPlayerTrack>(nowPlayingScrollViewModel).loadedTrack
         }
     }
-    
+
     //
-    
+
     private var dataSource: NSObject {
         get {
             Ivars<NSObject>(nowPlayingScrollViewModel).dataSource
         }
+        // TODO investigate dataSource and activeProviders
     }
-    
+
     var activeProviders: Array<NSObject> {
         get {
             Ivars<Array<NSObject>>(dataSource).activeProviders
@@ -38,15 +39,15 @@ extension NowPlayingScrollViewController {
             Ivars<Array<NSObject>>(dataSource).activeProviders = newValue
         }
     }
-    
+
     //
-    
+
     private var backgroundViewController: NSObject {
         get {
             Ivars<NSObject>(self).backgroundViewController
         }
     }
-    
+
     var backgroundViewModel: SPTNowPlayingBackgroundViewModel {
         get {
             let ivars = Ivars<SPTNowPlayingBackgroundViewModel>(self.backgroundViewController)

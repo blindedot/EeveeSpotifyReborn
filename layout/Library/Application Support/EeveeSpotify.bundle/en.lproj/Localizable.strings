@@ -81,7 +81,8 @@ static_color = "Static Color";
 
 color_normalization_factor = "Color Normalization Factor";
 dark_popups = "Dark PopUps";
-all_simplified_chinese = "Simplified Chinese";
+all_simplified_chinese = "Simplified Chinese everywhere";
+all_include_romanized = "Include romanized language everywhere";
 
 // Experiments
 

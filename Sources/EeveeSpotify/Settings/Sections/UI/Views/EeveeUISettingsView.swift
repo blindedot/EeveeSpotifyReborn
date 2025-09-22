@@ -64,6 +64,14 @@ struct EeveeUISettingsView: View {
                         set: { UserDefaults.allSimplifiedChinese = $0 }
                     )
                 )
+
+                Toggle(
+                    "all_include_romanized".localized,
+                    isOn: Binding<Bool>(
+                        get: { UserDefaults.allIncludeRomanized },
+                        set: { UserDefaults.allIncludeRomanized = $0 }
+                    )
+                )
             }
 
             NonIPadSpacerView()

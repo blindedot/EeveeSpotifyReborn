@@ -32,7 +32,7 @@ struct EeveeSpotify: Tweak {
         }
 
         if UserDefaults.allSimplifiedChinese {
-            AllSimplifiedChinese().activate()
+            AllSimplifiedChineseGroup().activate()
         }
 
         if UserDefaults.darkPopUps {

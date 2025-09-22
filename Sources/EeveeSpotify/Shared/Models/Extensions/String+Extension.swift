@@ -63,10 +63,22 @@ extension String {
         self.applyingTransform(.toLatin, reverse: false)!
     }
 
+    func firstUppercased() -> String {
+        prefix(1).uppercased() + dropFirst()
+    }
+
     func simplify() -> String {
         let mutable = NSMutableString(string: self)
         _ = CFStringTransform(mutable, nil, "Hant-Hans" as CFString, false)
         return mutable as String
+    }
+
+    func attachRomanized() -> String {
+        let romanized = self.romanize()
+        if romanized == self {
+            return romanized
+        }
+        return "\(self) (\(romanized))"
     }
 
     var isCanBeRomanizedLanguage: Bool {
