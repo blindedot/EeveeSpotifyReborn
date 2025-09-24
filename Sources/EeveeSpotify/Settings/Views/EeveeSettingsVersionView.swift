@@ -3,16 +3,16 @@ import SwiftUI
 struct EeveeSettingsVersionView: View {
     @State private var latestVersion: String?
     @State private var isPresentingContributorsSheet = false
-    
+
     private func loadVersion() async throws {
         let release = try await GitHubHelper.shared.getLatestRelease()
         latestVersion = String(release.tagName.dropFirst(5)) // swiftX.X
     }
-    
+
     private var isUpdateAvailable: Bool {
         latestVersion != nil && latestVersion != EeveeSpotify.version
     }
-    
+
     var body: some View {
         Section {
             if isUpdateAvailable {
@@ -23,8 +23,8 @@ struct EeveeSettingsVersionView: View {
             }
         } footer: {
             VStack(alignment: .leading) {
-                Text("v\(EeveeSpotify.version)")
-                
+                Text("v\(EeveeSpotify.version) foo")
+
                 if latestVersion == nil {
                     HStack(spacing: 10) {
                         ProgressView()
@@ -43,9 +43,9 @@ struct EeveeSettingsVersionView: View {
         .sheet(isPresented: $isPresentingContributorsSheet) {
             EeveeContributorsSheetView()
         }
-        
+
         .animation(.default, value: latestVersion)
-        
+
         .onAppear {
             Task {
                 try await loadVersion()
