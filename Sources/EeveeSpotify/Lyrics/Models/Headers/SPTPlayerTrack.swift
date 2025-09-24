@@ -4,8 +4,11 @@ import Foundation
     func setMetadata(_ metadata: [String:String])
     func metadata() -> [String:String]
     func extractedColorHex() -> String?
-    func trackTitle() -> String
-    func artistTitle() -> String
-    func artistName() -> String
     func URI() -> SPTURL
+    func trackTitle() -> String
+    func albumTitle() -> String
+
+    //  EeveeSpotify.hookTarget == .lastAvailableiOS14 ? track.artistTitle() : track.artistName()
+    func artistName() -> String
+    func artistTitle() -> String
 }

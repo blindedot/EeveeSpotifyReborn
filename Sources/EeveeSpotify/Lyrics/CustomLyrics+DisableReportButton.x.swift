@@ -16,7 +16,6 @@ class LyricsFullscreenViewControllerHook: ClassHook<UIViewController> {
 
         if UserDefaults.lyricsSource == .musixmatch
             && lyricsState.fallbackError == nil
-            && !lyricsState.wasChineseSimplified
             && !lyricsState.wasRomanized
             && !lyricsState.isEmpty {
             return

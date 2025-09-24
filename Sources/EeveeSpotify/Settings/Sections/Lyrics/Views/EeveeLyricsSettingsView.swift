@@ -34,9 +34,6 @@ struct EeveeLyricsSettingsView: View {
         var text = "romanized_lyrics_description".localized
 
         text.append("\n\n")
-        text.append("simplified_chinese_description".localized)
-
-        text.append("\n\n")
         text.append("include_romanization_with_meaning_description".localized)
 
         return Text(text)
@@ -66,10 +63,6 @@ struct EeveeLyricsSettingsView: View {
             Toggle(
                 "romanized_lyrics".localized,
                 isOn: $viewModel.lyricsOptions.romanization
-            )
-            Toggle(
-                "simplified_chinese".localized,
-                isOn: $viewModel.lyricsOptions.simplifiedChinese
             )
             Toggle(
                 "include_romanization_with_meaning".localized,

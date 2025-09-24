@@ -2,9 +2,11 @@ import Foundation
 
 extension UserDefaults {
     static var container: UserDefaults = .standard
-    
+
     private static let musixmatchTokenKey = "musixmatchToken"
     private static let darkPopUpsKey = "darkPopUps"
+    private static let allSimplifiedChineseKey = "allSimplifiedChinese"
+    private static let allIncludeRomanizedKey = "allIncludeRomanized"
     private static let patchTypeKey = "patchType"
     private static let overwriteConfigurationKey = "overwriteConfiguration"
     private static let lyricsColorsKey = "lyricsColors"
@@ -29,6 +31,24 @@ extension UserDefaults {
         }
     }
 
+    static var allSimplifiedChinese: Bool {
+        get {
+            container.object(forKey: allSimplifiedChineseKey) as? Bool ?? true
+        }
+        set (allSimplifiedChinese) {
+            container.set(allSimplifiedChinese, forKey: allSimplifiedChineseKey)
+        }
+    }
+
+    static var allIncludeRomanized: Bool {
+        get {
+            container.object(forKey: allIncludeRomanizedKey) as? Bool ?? true
+        }
+        set (allIncludeRomanized) {
+            container.set(allIncludeRomanized, forKey: allIncludeRomanizedKey)
+        }
+    }
+
     static var patchType: PatchType {
         get {
             if let rawValue = container.object(forKey: patchTypeKey) as? Int {
@@ -41,7 +61,7 @@ extension UserDefaults {
             container.set(patchType.rawValue, forKey: patchTypeKey)
         }
     }
-    
+
     static var overwriteConfiguration: Bool {
         get {
             container.bool(forKey: overwriteConfigurationKey)
@@ -50,7 +70,7 @@ extension UserDefaults {
             container.set(overwriteConfiguration, forKey: overwriteConfigurationKey)
         }
     }
-    
+
     static var hasShownCommonIssuesTip: Bool {
         get {
             container.bool(forKey: hasShownCommonIssuesTipKey)

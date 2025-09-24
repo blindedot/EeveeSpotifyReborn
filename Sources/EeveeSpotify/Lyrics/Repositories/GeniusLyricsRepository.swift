@@ -157,8 +157,7 @@ class GeniusLyricsRepository: LyricsRepository {
         return LyricsDto(
             lines: lines.map { line in LyricsLineDto(content: line) },
             timeSynced: false,
-            romanization: romanization,
-            chineseSimplified: lines.canBeSimplifiedLanguage ? .canBeChineseSimplified : .original
+            romanization: romanization
         )
     }
 }

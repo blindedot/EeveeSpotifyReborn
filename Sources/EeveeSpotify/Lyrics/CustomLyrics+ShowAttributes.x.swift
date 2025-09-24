@@ -91,26 +91,6 @@ class LyricsOnlyViewControllerHook: ClassHook<UIViewController> {
             )
         }
 
-        if lyricsState.wasChineseSimplified {
-            let attributedString = Dynamic.SPTEncoreAttributedString.alloc(
-                interface: SPTEncoreAttributedString.self
-            )
-
-            text.append(
-                EeveeSpotify.hookTarget == .lastAvailableiOS14
-                    ? attributedString.initWithString(
-                        "\n\("chinese_simplified_attribute".localized)",
-                        typeStyle: typeStyle,
-                        attributes: attributes
-                    )
-                    : attributedString.initWithString(
-                        "\n\("chinese_simplified_attribute".localized)",
-                        textStyle: typeStyle,
-                        attributes: attributes
-                    )
-            )
-        }
-
         if EeveeSpotify.hookTarget == .lastAvailableiOS14 {
             encoreLabel.setNumberOfLines(text.count)
         }

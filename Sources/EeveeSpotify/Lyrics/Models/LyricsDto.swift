@@ -4,7 +4,6 @@ struct LyricsDto {
     var lines: [LyricsLineDto]
     var timeSynced: Bool
     var romanization: LyricsRomanizationStatus
-    var chineseSimplified: LyricsChineseSimplificationStatus
     var translation: LyricsTranslationDto?
 
     func toSpotifyLyricsData(source: String) -> LyricsData {
@@ -15,7 +14,6 @@ struct LyricsDto {
         }
 
         let shouldRomanize = UserDefaults.lyricsOptions.romanization
-        let shouldSimplifyChinese = UserDefaults.lyricsOptions.simplifiedChinese
 
         if lines.isEmpty {
             lyricsData.lines = [
@@ -37,8 +35,7 @@ struct LyricsDto {
             lyricsData.lines = sortedLines.map { line in
                 LyricsLine.with {
                     $0.content = processLineContent(
-                        line.content, shouldRomanize: shouldRomanize,
-                        shouldSimplifyChinese: shouldSimplifyChinese)
+                        line.content, shouldRomanize: shouldRomanize)
                     $0.offsetMs = Int32(line.offsetMs ?? 0)
                 }
             }
@@ -54,14 +51,8 @@ struct LyricsDto {
         return lyricsData
     }
 
-    private func processLineContent(
-        _ content: String, shouldRomanize: Bool, shouldSimplifyChinese: Bool
-    ) -> String {
-        if shouldSimplifyChinese && chineseSimplified == .canBeChineseSimplified {
-            let mutable = NSMutableString(string: content)
-            _ = CFStringTransform(mutable, nil, "Hant-Hans" as CFString, false)
-            return mutable as String
-        } else if shouldRomanize && romanization == .canBeRomanized {
+    private func processLineContent( _ content: String, shouldRomanize: Bool) -> String {
+        if shouldRomanize && romanization == .canBeRomanized {
             return content.romanize()
         }
 

@@ -109,8 +109,7 @@ class LrclibLyricsRepository: LyricsRepository {
             return LyricsDto(
                 lines: [],
                 timeSynced: false,
-                romanization: .original,
-                chineseSimplified: .original
+                romanization: .original
             )
         }
 
@@ -119,8 +118,7 @@ class LrclibLyricsRepository: LyricsRepository {
             return LyricsDto(
                 lines: mapSyncedLyricsLines(lines),
                 timeSynced: true,
-                romanization: lines.canBeRomanized ? .canBeRomanized : .original,
-                chineseSimplified: lines.canBeSimplifiedLanguage ? .canBeChineseSimplified : .original
+                romanization: lines.canBeRomanized ? .canBeRomanized : .original
             )
         }
 
@@ -133,8 +131,7 @@ class LrclibLyricsRepository: LyricsRepository {
         return LyricsDto(
             lines: lines.map { content in LyricsLineDto(content: content) },
             timeSynced: false,
-            romanization: lines.canBeRomanized ? .canBeRomanized : .original,
-            chineseSimplified:  lines.canBeSimplifiedLanguage ? .canBeChineseSimplified : .original
+            romanization: lines.canBeRomanized ? .canBeRomanized : .original
         )
     }
 }

@@ -1,26 +1,30 @@
 import UIKit
 
 extension UIView {
-    func hasParent(matching regex: String) -> Bool {
-       guard let parent = self.superview else {
-           return false
-       }
+    func getParent(matching regex: String) -> UIView? {
+        guard let parent = self.superview else {
+            return nil
+        }
 
-       let parentClassName = NSStringFromClass(type(of: parent))
-       if parentClassName ~= regex {
-           return true
-       } else {
-           return parent.hasParent(matching: regex)
-       }
-   }
-    
+        let parentClassName = NSStringFromClass(type(of: parent))
+        if parentClassName ~= regex {
+            return parent
+        } else {
+            return parent.getParent(matching: regex)
+        }
+    }
+
+    func hasParent(matching regex: String) -> Bool {
+        return getParent(matching: regex) != nil
+    }
+
     func subviews(matching regex: String) -> [UIView] {
         var matchingSubviews = [UIView]()
         var stack = [self]
-        
+
         while !stack.isEmpty {
             let currentView = stack.removeLast()
-            
+
             for subview in currentView.subviews {
                 if NSStringFromClass(type(of: subview)) ~= regex {
                     matchingSubviews.append(subview)
@@ -28,7 +32,7 @@ extension UIView {
                 stack.append(subview)
             }
         }
-        
+
         return matchingSubviews
     }
 }
